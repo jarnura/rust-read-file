@@ -1,0 +1,16 @@
+name: Workflows secrets
+
+on: push
+
+jobs:
+  my-job:
+    name: Read Secrets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Decrypt large secret
+        run: ./decrypt_secret.sh
+        env:
+          LARGE_SECRET_PASSPHRASE: ${{ secrets.SECRET_PASSPHRASE }}
+      - name: Test printing your secret
+        run: cat $HOME/test/my_secret.json
