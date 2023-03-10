@@ -8,9 +8,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
+      - uses: Swatinem/rust-cache@v2.2.0
+        with:
+          save-if: ${{ github.event_name == 'push'}}
+
       - name: Decrypt large secret
         run: ./decrypt_secret.sh
         env:
           SECRET_PASSPHRASE: ${{ secrets.SECRET_PASSPHRASE }}
-      - name: Test printing your secret
-        run: cat $HOME/test/my_secret.json
+      - name: Test printing your secret of json
+        run: cat $HOME/target/test/auth.json
+      - name: Test printing your secret of toml
+        run: cat $HOME/target/test/auth_toml.toml
+      - name: Set file path in env
+        run: echo "MY_FILE_PATH=$HOME/target/test/auth_toml.toml" >> $GITHUB_ENV
+      - name: Execute tests
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: -- --nocapture
