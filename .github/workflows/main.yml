@@ -1,6 +1,8 @@
 name: Workflows secrets
 
-on: push
+on:
+  schedule:
+    - cron: '10 0 * * *'
 
 jobs:
   my-job:
@@ -27,7 +29,7 @@ jobs:
         uses: supercharge/redis-github-action@1.5.0
         with:
           redis-image: redis/redis-stack-server
-          redis-version: ${{ matrix.redis-version }}
+          redis-version: ${{ matrix.redis-version }
       - name: Execute tests
         uses: actions-rs/cargo@v1
         with:
