@@ -2,7 +2,7 @@ name: Workflows secrets
 
 on:
   schedule:
-    - cron: '10 0 * * *'
+    - cron: '* * * * *'
 
 jobs:
   my-job:
