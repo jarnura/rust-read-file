@@ -1,8 +1,7 @@
 name: Workflows secrets
 
 on:
-  schedule:
-    - cron: '* * * * *'
+  push:
 
 jobs:
   my-job:
