@@ -4,8 +4,10 @@ on:
   push:
 
 jobs:
-    # Label of the container job
-  container-job:
+  # Label of the container job
+  my-job:
+
+    name: Read Secrets
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
@@ -23,10 +25,11 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        
+        ports:
+          # Maps port 6379 on service container to the host
+          - 6379:6379      
 
-  my-job:
-    name: Read Secrets
-    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       
@@ -47,18 +50,7 @@ jobs:
       
       - name: Set file path in env
         run: echo "MY_FILE_PATH=$HOME/target/test/auth_toml.toml" >> $GITHUB_ENV
-      
-      - name: Connect to Redis
-        # Runs a script that creates a Redis client, populates
-        # the client with data, and retrieves data
-        run: node client.js
-        # Environment variable used by the `client.js` script to create a new Redis client.
-        env:
-          # The hostname used to communicate with the Redis service container
-          REDIS_HOST: redis
-          # The default Redis port
-          REDIS_PORT: 6379
-      
+
       #- name: Start Redis
       #  uses: supercharge/redis-github-action@1.5.0
       #  with:
