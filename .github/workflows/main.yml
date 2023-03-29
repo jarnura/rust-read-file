@@ -4,6 +4,26 @@ on:
   push:
 
 jobs:
+    # Label of the container job
+  container-job:
+    # Containers must run in Linux based operating systems
+    runs-on: ubuntu-latest
+    # Docker Hub image that `container-job` executes in
+    container: node:10.18-jessie
+
+    # Service containers to run with `container-job`
+    services:
+      # Label used to access the service container
+      redis:
+        # Docker Hub image
+        image: redis
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
   my-job:
     name: Read Secrets
     runs-on: ubuntu-latest
@@ -18,17 +38,33 @@ jobs:
         run: ./decrypt_secret.sh
         env:
           SECRET_PASSPHRASE: ${{ secrets.SECRET_PASSPHRASE }}
+      
       - name: Test printing your secret of json
         run: cat $HOME/target/test/auth.json
+      
       - name: Test printing your secret of toml
         run: cat $HOME/target/test/auth_toml.toml
+      
       - name: Set file path in env
         run: echo "MY_FILE_PATH=$HOME/target/test/auth_toml.toml" >> $GITHUB_ENV
-      - name: Start Redis
-        uses: supercharge/redis-github-action@1.5.0
-        with:
-          redis-image: redis/redis-stack-server
-          redis-version: ${{ matrix.redis-version }}
+      
+      - name: Connect to Redis
+        # Runs a script that creates a Redis client, populates
+        # the client with data, and retrieves data
+        run: node client.js
+        # Environment variable used by the `client.js` script to create a new Redis client.
+        env:
+          # The hostname used to communicate with the Redis service container
+          REDIS_HOST: redis
+          # The default Redis port
+          REDIS_PORT: 6379
+      
+      #- name: Start Redis
+      #  uses: supercharge/redis-github-action@1.5.0
+      #  with:
+      #    redis-image: redis/redis-stack-server
+      #    redis-version: ${{ matrix.redis-version }}
+      
       - name: Execute tests
         uses: actions-rs/cargo@v1
         with:
