@@ -19,10 +19,8 @@ struct Secrets {
 fn read_file() -> Secrets {
     let path = env::var("MY_FILE_PATH").unwrap();
     println!("{path}");
-    toml::from_str(
-        &std::fs::read_to_string(path).expect("auth file not found"),
-    )
-    .expect("Failed to read the file")
+    toml::from_str(&std::fs::read_to_string(path).expect("auth file not found"))
+        .expect("Failed to read the file")
 }
 
 #[cfg(test)]
