@@ -31,7 +31,13 @@ jobs:
           - 6379:6379      
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3.1.0
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
       
       - uses: Swatinem/rust-cache@v2.2.0
         with:
