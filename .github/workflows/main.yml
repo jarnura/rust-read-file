@@ -66,7 +66,9 @@ jobs:
       
       - name: Set file path in env
         run: echo "MY_FILE_PATH=$HOME/target/test/auth_toml.toml" >> $GITHUB_ENV
-      
+
+      - name: Set postgres url in env
+        run: echo "DATABASE_URL=postgres://postgres:postgres@localhost/postgres" >> $GITHUB_ENV
       - name: Execute tests
         uses: actions-rs/cargo@v1
         with:

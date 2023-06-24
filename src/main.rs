@@ -1,3 +1,5 @@
+use diesel::pg::PgConnection;
+use diesel::prelude::*;
 use serde::Deserialize;
 use std::env;
 
@@ -19,6 +21,9 @@ struct Secrets {
 fn read_file() -> Secrets {
     let path = env::var("MY_FILE_PATH").unwrap();
     println!("{path}");
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    PgConnection::establish(&database_url)
+        .unwrap_or_else(|_| panic!("Error connecting to {}", database_url));
     toml::from_str(&std::fs::read_to_string(path).expect("auth file not found"))
         .expect("Failed to read the file")
 }
